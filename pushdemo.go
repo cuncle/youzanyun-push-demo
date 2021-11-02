@@ -13,6 +13,8 @@ import (
 Event-Sign：防伪签名 ：MD5(client_id+entity+client_secret) ; 其中 entity 是从 RequestBody 读取的内容（详情见下文解析示例）
 详细推荐文档：https://doc.youzanyun.com/resource/develop-guide/41355/41536
 */
+// 申明全局变量 client_id,client_secret 
+var client_id,client_secret string  
 
 type YouzanClient struct {
 	ClientId     string
@@ -60,8 +62,8 @@ func (client *YouzanClient) Verifysign(req *http.Request) (err error) {
 }
 
 func YouzanPush(w http.ResponseWriter, r *http.Request) {
-	//如何查看 client_id 和 client_secret 参考：https://developers.youzanyun.com/article/1556850068966
-	client := New("your_client_id", "your_client_secret")
+	
+	client := New(client_id, client_secret)
 	err := client.Verifysign(r)
 	w.Header().Set("Content-Type", "application/json")
 	if err == nil {
@@ -74,7 +76,9 @@ func YouzanPush(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
+	//如何查看 client_id 和 client_secret 参考：https://developers.youzanyun.com/article/1556850068966 
+        client_id="your_client_id" 
+	client_secret="your_client_secret"
 	http.HandleFunc("/", YouzanPush)
 	http.ListenAndServe(":8888", nil)
 
